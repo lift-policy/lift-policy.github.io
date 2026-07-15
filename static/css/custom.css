@@ -1,0 +1,292 @@
+.lift-hero {
+    background: linear-gradient(180deg, #f7fafc 0%, #ffffff 100%);
+}
+
+.section {
+    padding-bottom: 2.25rem;
+    padding-top: 2.25rem;
+}
+
+.lift-hero .hero-body {
+    padding-bottom: 2.25rem;
+    padding-top: 2.75rem;
+}
+
+.teaser .hero-body {
+    padding-bottom: 1.75rem;
+}
+
+.publication-title {
+    line-height: 1.08;
+}
+
+.lift-kicker {
+    color: #275f72;
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
+.author-list {
+    margin: 1rem auto 1.2rem;
+    max-width: 58rem;
+}
+
+.publication-links {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.publication-links .link-block {
+    display: flex;
+}
+
+.publication-links .link-block a {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.publication-links .button {
+    height: 2.7rem;
+    min-width: 8rem;
+}
+
+.publication-links .button[aria-disabled="true"] {
+    cursor: default;
+    font-size: 0.8rem;
+    min-width: 0;
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+}
+
+@media screen and (max-width: 768px) {
+    .publication-links {
+        flex-wrap: wrap;
+    }
+}
+
+.author-list p {
+    margin-bottom: 0.35rem;
+}
+
+.authors {
+    font-size: 1.08rem;
+    line-height: 1.45;
+}
+
+.affiliations,
+.author-notes {
+    color: #4c5961;
+    font-size: 0.96rem;
+    line-height: 1.45;
+}
+
+.lift-main-figure,
+.lift-figure img {
+    display: block;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.lift-main-figure {
+    margin-bottom: 1rem;
+    width: 96%;
+}
+
+.lift-band {
+    background: #f6f8f9;
+}
+
+.lift-card,
+.qa-card,
+.video-tile {
+    background: #ffffff;
+    border: 1px solid #d9e1e5;
+    border-radius: 8px;
+    height: 100%;
+    padding: 1.25rem;
+}
+
+.lift-card p,
+.qa-card p,
+.video-tile p {
+    color: #36454f;
+    line-height: 1.55;
+}
+
+.lift-figure {
+    margin: 1.35rem 0;
+    text-align: center;
+}
+
+.lift-figure.compact {
+    margin: 0.75rem 0;
+}
+
+.lift-figure img {
+    max-width: 86%;
+}
+
+.lift-figure.compact img {
+    max-width: 82%;
+}
+
+.lift-figure figcaption {
+    color: #3f4b52;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin: 0.55rem auto 0;
+    max-width: 52rem;
+}
+
+.method-block {
+    margin-top: 1.75rem;
+}
+
+.method-block + .method-block {
+    border-top: 1px solid #e3eaee;
+    padding-top: 1.75rem;
+}
+
+.lift-method-row {
+    margin-top: 1rem;
+}
+
+.experiment-question {
+    margin-top: 2.25rem;
+}
+
+.experiment-question + .experiment-question {
+    border-top: 1px solid #dde7eb;
+    padding-top: 2rem;
+}
+
+.method-inline {
+    font-weight: 700;
+}
+
+.experiment-videos {
+    margin-top: 1.1rem;
+}
+
+.performance-curve img {
+    max-width: 100%;
+}
+
+.question-summary {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.qa-list {
+    display: grid;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.qa-card {
+    padding: 1.25rem 1.35rem;
+}
+
+.qa-card .title {
+    margin-bottom: 0.5rem;
+}
+
+.task-video-group {
+    margin-top: 2.25rem;
+}
+
+.task-video-group.compact {
+    margin-top: 1.25rem;
+}
+
+.task-video-group .title {
+    margin-bottom: 1rem;
+}
+
+.video-tile {
+    overflow: hidden;
+    padding: 0;
+}
+
+.video-method-group {
+    height: 100%;
+}
+
+.video-method-group > .video-method {
+    background: #ffffff;
+    border: 1px solid #d9e1e5;
+    border-radius: 8px;
+    margin-bottom: 0.55rem;
+}
+
+.video-stack {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.video-tile video {
+    aspect-ratio: 16 / 9;
+    background: #0f171b;
+    display: block;
+    object-fit: cover;
+    width: 100%;
+}
+
+.video-demo-label {
+    color: #56656d;
+    font-family: 'Google Sans', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.45rem 0.6rem 0.55rem;
+    text-align: center;
+}
+
+.video-frame {
+    align-items: center;
+    aspect-ratio: 16 / 9;
+    background: #eef3f5;
+    color: #275f72;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.video-frame .icon {
+    font-size: 1.75rem;
+    height: 2.5rem;
+    width: 2.5rem;
+}
+
+.video-method {
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.75rem 0.8rem 0.85rem;
+    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+    .publication-title {
+        font-size: 2rem !important;
+    }
+
+    .lift-main-figure {
+        width: 100%;
+    }
+
+    .lift-figure img,
+    .lift-figure.compact img {
+        max-width: 100%;
+    }
+
+}

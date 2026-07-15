@@ -1,0 +1,430 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="LIFT adds late reactive force injection to pretrained VLA policies for faster force-aware post-training on contact-rich manipulation tasks.">
+  <meta name="keywords" content="LIFT, VLA, force sensing, robot learning, online DAgger, post-training, contact-rich manipulation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LIFT: Never Too Late for Force</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/custom.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="./static/js/sync_video.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#abstract">Abstract</a>
+      <a class="navbar-item" href="#method">Method</a>
+      <a class="navbar-item" href="#experiments">Experiments</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero lift-hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            LIFT: Never Too Late for Force
+          </h1>
+          <h2 class="subtitle is-4">
+            Accelerating VLA Post-Training with Reactive Force Injection
+          </h2>
+
+          <div class="publication-authors author-list">
+            <p class="authors"><a href="https://y-wng.github.io/">Yi Wang</a><sup>12*</sup>, <a href="https://wendichen.me">Wendi Chen</a><sup>12*‡</sup>, <a href="https://github.com/nssmd">Zimo Wen</a><sup>1*</sup>, <a href="https://hanxue.me">Han Xue</a><sup>1</sup>, Xueqi Li<sup>23</sup>, <a href="https://virlus.github.io/">Wenye Yu</a><sup>12</sup>, Zhijie Chen<sup>1</sup>, Hao Yang<sup>1</sup>, <a href="https://lyuj1998.github.io">Jun Lv</a><sup>14</sup></p>
+            <p class="authors"><a href="https://alvinwen428.github.io">Chuan Wen</a><sup>1†</sup>, <a href="https://www.mvig.org">Cewu Lu</a><sup>124†</sup></p>
+            <p class="affiliations"><sup>1</sup>Shanghai Jiao Tong University &nbsp; <sup>2</sup>Shanghai Innovation Institute &nbsp; <sup>3</sup>Southern University of Science and Technology &nbsp; <sup>4</sup>Noematrix Ltd.</p>
+            <p class="author-notes"><sup>*</sup>Equal contribution &nbsp; <sup>‡</sup>Project lead &nbsp; <sup>†</sup>Equal advising </p>
+          </div>
+
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="./LIFT_paper.pdf"
+                 class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                <span>Paper</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <span class="button is-normal is-rounded is-light" aria-disabled="true">
+                <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>arXiv coming soon</span>
+              </span>
+            </span>
+            <span class="link-block">
+              <span class="button is-normal is-rounded is-light" aria-disabled="true">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code coming soon</span>
+              </span>
+            </span>
+            <span class="link-block">
+              <span class="button is-normal is-rounded is-light" aria-disabled="true">
+                <span class="icon"><i class="fas fa-database"></i></span>
+                <span>Data coming soon</span>
+              </span>
+            </span>
+            <span class="link-block">
+              <span class="button is-normal is-rounded is-light" aria-disabled="true">
+                <span class="icon"><i class="fas fa-robot"></i></span>
+                <span>Model coming soon</span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img id="teaser" class="lift-main-figure" src="./static/images/fig_teaser.png" alt="LIFT overview">
+      <h2 class="subtitle has-text-centered">
+        LIFT grafts a reactive force pathway onto a pretrained VLA, keeps the original visual-language prior intact,
+        and learns from online force corrections collected on the policy's own failure states.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section id="abstract" class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Pretrained vision-language-action policies carry strong language-conditioned manipulation priors,
+            but they remain largely vision-driven. In contact-rich states, visual observations can be ambiguous:
+            occlusion, partial observation, and depth error make it hard to know whether the robot has actually
+            grasped, inserted, or seated an object.
+          </p>
+          <p>
+            <b>LIFT</b> (<b>L</b>ate Reactive <b>I</b>njection of <b>F</b>orce for VLA Post-<b>T</b>raining)
+            adds force after pretraining instead of rebuilding the foundation model. It encodes recent 6D
+            end-effector force as causal force memory, injects it through zero-initialized cross attention,
+            and trains a reactive action expert beside the original VLA action stream.
+          </p>
+          <p>
+            Across towel folding, book insertion, and Hanoi ring placement, LIFT learns faster and reaches
+            stronger performance than vision-only post-training while preserving the pretrained VLA prior.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="method" class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Method</h2>
+
+    <div class="method-block">
+      <h3 class="title is-4">Reactive Force Injection</h3>
+      <div class="content has-text-justified">
+        <p>
+          LIFT starts from a pretrained vision-only VLA and grafts a reactive action expert beside the original
+          action expert. Instead of committing to a full open-loop action chunk, the reactive stream decodes
+          actions causally within the chunk and receives recent 6D end-effector force as latency-aligned force
+          memory.
+        </p>
+        <p>
+          At runtime, the slow vision-language prefix is computed once and cached. Each within-chunk refresh
+          only re-encodes the newest force window and reruns the lightweight reactive branch, allowing the
+          policy to respond to contact changes without a full vision-language forward pass.
+        </p>
+      </div>
+      <figure class="lift-figure">
+        <img src="./static/images/fig_arch.png" alt="LIFT architecture">
+        <figcaption>
+          <b>LIFT architecture.</b> Recent force is encoded as causal memory and injected into the reactive branch.
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="method-block">
+      <h3 class="title is-4">Prior-Preserving Initialization</h3>
+      <div class="columns is-vcentered lift-method-row">
+        <div class="column is-half">
+          <figure class="lift-figure compact">
+            <img src="./static/images/fig_mask.png" alt="Shifted causal attention mask">
+            <figcaption><b>Shifted causal attention.</b> Initialization-equivalent action decoding.</figcaption>
+          </figure>
+        </div>
+        <div class="column is-half">
+          <div class="content has-text-justified">
+            <p>
+              Adding a force pathway should not erase the pretrained VLA prior. LIFT copies the original
+              action-expert weights into the reactive expert and uses a shifted causal attention pattern so each
+              reactive token receives an equivalent context to the original fully attentive action token at
+              initialization.
+            </p>
+            <p>
+              The force-injected cross attention is added as a residual update with a zero-initialized output
+              projection. Before post-training, the force residual is exactly zero, so the augmented model starts
+              from the same action output as the base VLA.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="method-block">
+      <h3 class="title is-4">Training with Heterogeneous Data</h3>
+      <div class="columns is-vcentered lift-method-row">
+        <div class="column is-half">
+          <div class="content has-text-justified">
+            <p>
+              LIFT trains one model on both abundant vision-only task-alignment data and scarce force-enabled
+              online corrections. Vision-only batches use zero force placeholders and mask the encoded force
+              memory, while online correction batches keep measured force active.
+            </p>
+            <p>
+              The post-training loop mixes offline visual data with online DAgger corrections. This lets the
+              policy preserve broad task knowledge while learning force responses from states visited by the
+              current policy.
+            </p>
+          </div>
+        </div>
+        <div class="column is-half">
+          <figure class="lift-figure compact">
+            <img src="./static/images/fig_system.png" alt="LIFT training pipeline">
+            <figcaption><b>Training pipeline.</b> Vision-only alignment followed by online force-correction post-training.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experiments" class="section lift-band">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Experiments</h2>
+
+    <div class="content has-text-justified">
+      <p>
+        We evaluate LIFT on three real-robot contact-rich tasks: towel folding, book insertion, and Hanoi ring
+        placement. The comparison includes <b>LIFT</b>, the full reactive force-injection system;
+        <b>LIFT w/o Reactive Force Injection</b>, which uses force without the reactive force-memory pathway;
+        <b>LIFT w/o Online DAgger</b>, which removes repeated on-policy corrective updates; and
+        <b>&pi;<sub>0.5</sub> w/ Online DAgger</b>, a vision-only online post-training baseline.
+      </p>
+    </div>
+
+    <figure class="lift-figure performance-curve">
+      <img src="./static/images/fig_learning_curves.png" alt="Online learning curves for LIFT">
+      <figcaption>
+        <b>Performance curves.</b> LIFT and its ablations are compared against the vision-only online
+        DAgger baseline across the three manipulation tasks.
+      </figcaption>
+    </figure>
+
+    <div class="experiment-videos">
+      <h3 class="title is-4">Videos</h3>
+      <div class="task-video-group compact">
+        <h4 class="title is-5">Towel Folding</h4>
+        <div class="columns is-centered">
+          <div class="column is-6">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="towel-folding-demo-1"><source src="./static/videos/towel%20folding/lift_1.mp4"></video>
+                  <p class="video-demo-label">LIFT</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="towel-folding-demo-2"><source src="./static/videos/towel%20folding/lift_2.mp4"></video>
+                  <p class="video-demo-label">LIFT</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-6">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="towel-folding-demo-1"><source src="./static/videos/towel%20folding/pi05_w_online_1.mp4"></video>
+                  <p class="video-demo-label">&pi;<sub>0.5</sub> w/ Online DAgger</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="towel-folding-demo-2"><source src="./static/videos/towel%20folding/pi05_w_onine_2.mp4"></video>
+                  <p class="video-demo-label">&pi;<sub>0.5</sub> w/ Online DAgger</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-video-group compact">
+        <h4 class="title is-5">Book Insertion</h4>
+        <div class="columns is-centered">
+          <div class="column is-4">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="book-insertion-demo-1"><source src="./static/videos/book%20insertion/lift_1.mp4"></video>
+                  <p class="video-demo-label">LIFT</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="book-insertion-demo-2"><source src="./static/videos/book%20insertion/lift_2.mp4"></video>
+                  <p class="video-demo-label">LIFT</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-4">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="book-insertion-demo-1"><source src="./static/videos/book%20insertion/pi05_w_online_1.mp4"></video>
+                  <p class="video-demo-label">&pi;<sub>0.5</sub> w/ Online DAgger</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="book-insertion-demo-2"><source src="./static/videos/book%20insertion/pi05_w_online_2.mp4"></video>
+                  <p class="video-demo-label">&pi;<sub>0.5</sub> w/ Online DAgger</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-4">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="book-insertion-demo-1"><source src="./static/videos/book%20insertion/lift_wo_reactive_1.mp4"></video>
+                  <p class="video-demo-label">LIFT w/o Reactive Force Injection</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="book-insertion-demo-2"><source src="./static/videos/book%20insertion/lift_wo_reactive_2.mp4"></video>
+                  <p class="video-demo-label">LIFT w/o Reactive Force Injection</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-video-group compact">
+        <h4 class="title is-5">Hanoi Ring Placement</h4>
+        <div class="columns is-centered">
+          <div class="column is-4">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="hanoi-ring-demo-1"><source src="./static/videos/hanoi%20ring/lift_1.mp4"></video>
+                  <p class="video-demo-label">LIFT</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="hanoi-ring-demo-2"><source src="./static/videos/hanoi%20ring/lift_2.mp4"></video>
+                  <p class="video-demo-label">LIFT</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-4">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="hanoi-ring-demo-1"><source src="./static/videos/hanoi%20ring/pi05_w_online_1.mp4"></video>
+                  <p class="video-demo-label">&pi;<sub>0.5</sub> w/ Online DAgger</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="hanoi-ring-demo-2"><source src="./static/videos/hanoi%20ring/pi05_w_online_2.mp4"></video>
+                  <p class="video-demo-label">&pi;<sub>0.5</sub> w/ Online DAgger</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-4">
+            <div class="video-method-group">
+              <div class="video-stack">
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="hanoi-ring-demo-1"><source src="./static/videos/hanoi%20ring/lift_wo_reactive_1.mp4"></video>
+                  <p class="video-demo-label">LIFT w/o Reactive Force Injection</p>
+                </div>
+                <div class="video-tile">
+                  <video controls muted playsinline preload="metadata" data-sync-group="hanoi-ring-demo-2"><source src="./static/videos/hanoi%20ring/lift_wo_reactive_2.mp4"></video>
+                  <p class="video-demo-label">LIFT w/o Reactive Force Injection</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-summary">
+      <article class="qa-card">
+        <h3 class="title is-5">Q1: Does force accelerate VLA post-training?</h3>
+        <p>
+          This question compares LIFT and LIFT w/o Reactive Force Injection against
+          &pi;<sub>0.5</sub> w/ Online DAgger. The result shows that force-aware post-training learns faster
+          and reaches stronger task performance than vision-only online post-training.
+        </p>
+      </article>
+      <article class="qa-card">
+        <h3 class="title is-5">Q2: Does reactive force injection matter?</h3>
+        <p>
+          This question compares LIFT with LIFT w/o Reactive Force Injection. The result shows that recent
+          force memory and within-chunk reactive updates are important for contact phases that cannot be
+          resolved from a single force frame.
+        </p>
+      </article>
+      <article class="qa-card">
+        <h3 class="title is-5">Q3: Does online data matter for reactive force injection?</h3>
+        <p>
+          This question compares LIFT with LIFT w/o Online DAgger. The result shows that offline force data
+          alone misses many contact states encountered by the learner, while online DAgger collects corrections
+          on the policy's own failure states.
+        </p>
+      </article>
+      <article class="qa-card">
+        <h3 class="title is-5">Q4: Does LIFT preserve generalization?</h3>
+        <p>
+          This question evaluates the final LIFT checkpoint under object, tablecloth, and lighting shifts.
+          The result shows that LIFT keeps the visual generalization inherited from the pretrained VLA while
+          adding force-aware contact adaptation.
+        </p>
+      </article>
+    </div>
+
+    <figure class="lift-figure performance-curve">
+      <img src="./static/images/fig_generalization_bars.png" alt="Generalization performance bars">
+      <figcaption><b>Generalization results.</b> Performance under shifted task conditions.</figcaption>
+    </figure>
+    <figure class="lift-figure">
+      <img src="./static/images/fig_gen_settings.png" alt="Generalization task settings">
+      <figcaption><b>Generalization settings.</b> Task setups used for shifted-condition evaluation.</figcaption>
+    </figure>
+  </div>
+</section>
+
+</body>
+</html>
