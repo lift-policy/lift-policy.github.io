@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="LIFT adds late reactive force injection to pretrained VLA policies for faster force-aware post-training on contact-rich manipulation tasks.">
+        content="LIFT adds reactive force injection and online corrections to pretrained VLA policies, improving manipulation performance with task-dependent adaptation gains.">
   <meta name="keywords" content="LIFT, VLA, force sensing, robot learning, online DAgger, post-training, contact-rich manipulation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LIFT: Never Too Late for Force</title>
@@ -11,38 +11,33 @@
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
         rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css?v=de214a17b6c7">
   <link rel="stylesheet" href="./static/css/custom.css">
   <link rel="icon" href="./static/images/favicon.svg">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
-  <script src="./static/js/sync_video.js"></script>
+  <script defer src="./static/js/index.js"></script>
+  <script defer src="./static/js/sync_video.js"></script>
 </head>
 <body>
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+    <button type="button" class="navbar-burger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-menu">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
-    </a>
+    </button>
   </div>
-  <div class="navbar-menu">
+  <div class="navbar-menu" id="main-menu">
     <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
       <a class="navbar-item" href="#abstract">Abstract</a>
       <a class="navbar-item" href="#method">Method</a>
       <a class="navbar-item" href="#experiments">Experiments</a>
+      <a class="navbar-item" href="#videos">Videos</a>
+      <a class="navbar-item" href="#bibtex">BibTeX</a>
     </div>
   </div>
 </nav>
@@ -84,10 +79,10 @@
               </a>
             </span>
             <span class="link-block">
-              <span class="button is-normal is-rounded is-light" aria-disabled="true">
+              <a href="https://github.com/y-wng/lift" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="fab fa-github"></i></span>
-                <span>Code coming soon</span>
-              </span>
+                <span>Code</span>
+              </a>
             </span>
           </div>
         </div>
@@ -99,13 +94,13 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <a href="./static/images/teaser_v3.pdf?v=fb76f7ce3dfe" target="_blank" rel="noopener" aria-label="Open LIFT overview as a PDF">
-        <img id="teaser" class="lift-main-figure" src="./static/images/teaser_v3.svg?v=13f780eca34b" width="1540" height="477" alt="LIFT overview">
+      <a class="figure-link" href="./static/images/fig_teaser.png" target="_blank" rel="noopener" aria-label="Open LIFT overview at full resolution">
+        <img id="teaser" class="lift-main-figure" src="./static/images/fig_teaser.png" fetchpriority="high" alt="LIFT overview: copied reactive action expert, causal force memory, online contact corrections, and three-task performance comparison" width="2800" height="875" decoding="async">
       </a>
-      <h2 class="subtitle has-text-centered">
-        LIFT grafts a reactive force pathway onto a pretrained VLA, keeps the original visual-language prior intact,
-        and learns from online force corrections collected on the policy's own failure states.
-      </h2>
+      <p class="subtitle has-text-centered">
+        LIFT adds reactive force feedback to a pretrained VLA, preserves its action output at initialization,
+        and learns from online contact corrections on states visited by the current policy.
+      </p>
     </div>
   </div>
 </section>
@@ -117,20 +112,25 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Pretrained vision-language-action policies carry strong language-conditioned manipulation priors,
-            but they remain largely vision-driven. In contact-rich states, visual observations can be ambiguous:
-            occlusion, partial observation, and depth error make it hard to know whether the robot has actually
-            grasped, inserted, or seated an object.
+            Pretrained vision-language-action (VLA) policies provide strong language-conditioned manipulation
+            knowledge, but they remain largely vision-driven and can struggle once manipulation enters contact
+            states where the scene is occluded, depth is ambiguous, or small force errors push execution off
+            the offline demonstration distribution.
           </p>
           <p>
             <b>LIFT</b> (<b>L</b>ate Reactive <b>I</b>njection of <b>F</b>orce for VLA Post-<b>T</b>raining)
-            adds force after pretraining instead of rebuilding the foundation model. It encodes recent 6D
-            end-effector force as causal force memory, injects it through zero-initialized cross attention,
-            and trains a reactive action expert beside the original VLA action stream.
+            is a force-aware post-training framework that adds contact reactivity while preserving the policy's
+            output at initialization. LIFT grafts a reactive action expert beside the original action expert,
+            initializes it from pretrained action weights, and injects recent 6D end-effector force through
+            <b>causal force memory</b> and <b>zero-initialized cross attention</b>, enabling actions to be
+            refreshed during execution. To address the policy-dependent distribution shift of contact feedback,
+            LIFT uses an online DAgger loop with a mixture of offline task-alignment data and human-corrected
+            online rollouts.
           </p>
           <p>
-            Across towel folding, book insertion, and Hanoi ring placement, LIFT learns faster and reaches
-            stronger performance than vision-only post-training while preserving the pretrained VLA prior.
+            Across towel folding, book insertion, and Hanoi ring placement, LIFT reaches higher performance
+            than vision-only post-training, with task-dependent adaptation dynamics and force-history benefits.
+            Our code is <a href="https://github.com/y-wng/lift">publicly available</a>.
           </p>
         </div>
       </div>
@@ -153,14 +153,16 @@
         </p>
         <p>
           At runtime, the slow vision-language prefix is computed once and cached. Each within-chunk refresh
-          only re-encodes the newest force window and reruns the lightweight reactive branch, allowing the
-          policy to respond to contact changes without a full vision-language forward pass.
+          re-encodes the latest latency-aligned force history and reevaluates both action experts against the
+          cached prefix. The reactive expert supplies the full action output, allowing contact updates without
+          another full vision-language forward pass.
         </p>
       </div>
       <figure class="lift-figure">
-        <img src="./static/images/fig_arch.png" alt="LIFT architecture">
+        <a class="figure-link" href="./static/images/fig_arch.png" target="_blank" rel="noopener" aria-label="Open full-size figure: LIFT architecture"><img src="./static/images/fig_arch.png" alt="LIFT architecture" width="2400" height="1174" decoding="async" loading="lazy"></a>
         <figcaption>
-          <b>LIFT architecture.</b> Recent force is encoded as causal memory and injected into the reactive branch.
+          <b>LIFT architecture.</b> Causal force memory enters the reactive expert through zero-initialized
+          cross attention, enabling within-chunk updates while preserving the policy output at initialization.
         </figcaption>
       </figure>
     </div>
@@ -170,8 +172,9 @@
       <div class="columns is-vcentered lift-method-row">
         <div class="column is-half">
           <figure class="lift-figure compact">
-            <img src="./static/images/fig_mask.png" alt="Shifted causal attention mask">
-            <figcaption><b>Shifted causal attention.</b> Initialization-equivalent action decoding.</figcaption>
+            <a class="figure-link" href="./static/images/fig_mask.png" target="_blank" rel="noopener" aria-label="Open full-size figure: Shifted causal attention mask"><img src="./static/images/fig_mask.png" alt="Shifted causal attention mask" width="2000" height="1840" decoding="async" loading="lazy"></a>
+            <figcaption><b>Shifted causal attention.</b> Each reactive token sees the vision-language prefix,
+              later base-action tokens, and the causal reactive prefix.</figcaption>
           </figure>
         </div>
         <div class="column is-half">
@@ -203,15 +206,15 @@
               memory, while online correction batches keep measured force active.
             </p>
             <p>
-              The post-training loop mixes offline visual data with online DAgger corrections. This lets the
-              policy preserve broad task knowledge while learning force responses from states visited by the
-              current policy.
+              The main post-training protocol uses a fixed <b>1:1 offline:online sampling ratio</b>. Offline
+              demonstrations provide nominal action supervision, while online DAgger continually adds
+              force-enabled corrections from states visited by the current policy.
             </p>
           </div>
         </div>
         <div class="column is-half">
           <figure class="lift-figure compact">
-            <img src="./static/images/fig_system.png" alt="LIFT training pipeline">
+            <a class="figure-link" href="./static/images/fig_system.png" target="_blank" rel="noopener" aria-label="Open full-size figure: LIFT training pipeline"><img src="./static/images/fig_system.png" alt="LIFT training pipeline" width="2400" height="1072" decoding="async" loading="lazy"></a>
             <figcaption><b>Training pipeline.</b> Vision-only alignment followed by online force-correction post-training.</figcaption>
           </figure>
         </div>
@@ -224,28 +227,147 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Experiments</h2>
 
-    <div class="content has-text-justified">
+    <div class="content">
       <p>
-        We evaluate LIFT on three real-robot contact-rich tasks: towel folding, book insertion, and Hanoi ring
-        placement. The comparison includes <b>LIFT</b>, the full reactive force-injection system;
-        <b>LIFT w/o Reactive Force Injection</b>, which uses force without the reactive force-memory pathway;
-        <b>LIFT w/o Online DAgger</b>, which removes repeated on-policy corrective updates; and
-        <b>&pi;<sub>0.5</sub> w/ Online DAgger</b>, a vision-only online post-training baseline.
+        We evaluate towel folding, book insertion, and Hanoi ring placement on a Flexiv Rizon 4S with a
+        6D end-effector force sensor. Vision-only demonstrations come from a handheld device;
+        online force-enabled corrections are collected with Flexiv TDK.
       </p>
     </div>
+    <div class="evaluation-note">
+      <p><b>Evaluation.</b> Main learning curves and ablations use three groups of ten autonomous rollouts
+        per checkpoint (<b>n = 30</b>), with the reported <b>95% confidence intervals</b>. Towel and book
+        use graded task scores; Hanoi uses binary success. Shift tests retain <b>10 rollouts per condition</b>.</p>
+      <p><b>Horizontal axis.</b> Curves track optimization steps. A recorded sample is one 10 Hz frame;
+        data reuse and policy-dependent intervention rates mean equal training steps do not imply equal
+        robot interaction or human-correction budgets.</p>
+    </div>
+    <details class="policy-details">
+      <summary>Six policies in the comparison</summary>
+      <dl class="policy-list">
+        <dt>LIFT</dt><dd>The full reactive force-injected VLA trained with online DAgger.</dd>
+        <dt>&pi;<sub>0.5</sub> w/ Online DAgger</dt><dd>The same online loop without force input.</dd>
+        <dt>LIFT w/o Reactive Force Injection</dt><dd>Force post-training with a single-frame force input instead of reactive force memory.</dd>
+        <dt>LIFT w/ Offline DAgger</dt><dd>The reactive model trained with a fixed force-correction buffer, without repeated on-policy aggregation.</dd>
+        <dt>&pi;<sub>0.5</sub> w/ Offline Handheld Data</dt><dd>Vision-only training on the larger offline handheld dataset.</dd>
+        <dt>Residual Policy</dt><dd>A 28M-parameter force-reactive Transformer that adds action corrections to a frozen, offline-trained &pi;<sub>0.5</sub> policy.</dd>
+      </dl>
+    </details>
 
-    <figure class="lift-figure performance-curve">
-      <img src="./static/images/fig_learning_curves.png" alt="Online learning curves for LIFT">
-      <figcaption>
-        <b>Performance curves.</b> LIFT and its ablations are compared against the vision-only online
-        DAgger baseline across the three manipulation tasks.
-      </figcaption>
-    </figure>
+    <article class="experiment-question" id="post-training">
+      <h3 class="title is-4">Does LIFT accelerate post-training? <span class="question-number">Q1</span></h3>
+      <div class="content">
+        <p>LIFT reaches stronger final performance than vision-only online DAgger, with different adaptation
+          dynamics across tasks. Towel folding improves earlier; the advantage on book insertion emerges later.
+          Extended Hanoi training largely plateaus, supporting the higher final level beyond the original endpoint.</p>
+      </div>
+      <figure class="lift-figure performance-curve">
+        <a class="figure-link" href="./static/images/fig_learning_curves.png" target="_blank" rel="noopener" aria-label="Open full-size figure: Task scores over training steps for towel folding, book insertion, and Hanoi ring placement, including extended Hanoi training and offline baselines"><img src="./static/images/fig_learning_curves.png" alt="Task scores over training steps for towel folding, book insertion, and Hanoi ring placement, including extended Hanoi training and offline baselines" width="2800" height="917" decoding="async" loading="lazy"></a>
+        <figcaption><b>Learning curves on three tasks.</b> Double-lined Hanoi curves extend training beyond
+          the original endpoint. Each checkpoint uses n = 30 rollouts with 95% confidence intervals.</figcaption>
+      </figure>
+    </article>
 
+    <article class="experiment-question" id="residual-policy">
+      <h3 class="title is-4">Why adapt the full action expert? <span class="question-number">Q2</span></h3>
+      <div class="content">
+        <p>The <b>28M-parameter Residual Policy</b> adds force-conditioned corrections to a frozen base;
+          LIFT's <b>300M-parameter reactive expert</b> predicts full actions from pretrained action weights.
+          The smaller residual underperforms LIFT under the tested base-policy and intervention protocol.</p>
+        <p>LIFT receives full-action supervision from both demonstrations and corrections. The residual learns
+          expert-minus-base corrections during interventions and zero targets on offline or non-intervention
+          samples. This comparison changes capacity, initialization, and supervision together; it does not
+          isolate model size or establish that residual policies fail with stronger bases.</p>
+      </div>
+      <figure class="lift-figure performance-curve">
+        <a class="figure-link" href="./static/images/fig_residual_policy.png" target="_blank" rel="noopener" aria-label="Open full-size figure: Learning curves of the 28M residual policy on towel folding, book insertion, and Hanoi ring placement"><img src="./static/images/fig_residual_policy.png" alt="Learning curves of the 28M residual policy on towel folding, book insertion, and Hanoi ring placement" width="2800" height="917" decoding="async" loading="lazy"></a>
+        <figcaption><b>Lightweight residual baseline.</b> A custom force-reactive Transformer inspired by
+          ImplicitRDP and CR-DAgger, evaluated with n = 30 and 95% confidence intervals. This is not a
+          reproduction of either method.</figcaption>
+      </figure>
+    </article>
+
+    <article class="experiment-question" id="force-history">
+      <h3 class="title is-4">When does force history help? <span class="question-number">Q3</span></h3>
+      <div class="content">
+        <p>The comparison with single-frame force input in the main learning curves shows that the value of
+          force history depends on the contact behavior.</p>
+      </div>
+      <div class="task-findings">
+        <div class="lift-card">
+          <h4 class="title is-5">Towel folding</h4>
+          <p>Force helps verify whether the towel was grasped. A single force frame can outperform history
+            when this immediate contact cue is sufficient.</p>
+        </div>
+        <div class="lift-card">
+          <h4 class="title is-5">Book insertion</h4>
+          <p>Recent force evolution helps distinguish insertion phases, including reaching the back of the
+            shelf and deciding when to stop pushing or release.</p>
+        </div>
+        <div class="lift-card">
+          <h4 class="title is-5">Hanoi ring placement</h4>
+          <p>Force memory helps distinguish a persistent placement error or jam from the transient impact
+            of an initial tap against the pole.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="experiment-question" id="data-mixture">
+      <h3 class="title is-4">Why retain offline data? <span class="question-number">Q4</span></h3>
+      <div class="columns is-vcentered">
+        <div class="column is-half">
+          <figure class="lift-figure ratio-figure">
+            <a class="figure-link" href="./static/images/fig_mixing_ratio.png" target="_blank" rel="noopener" aria-label="Open full-size figure: Towel folding ablation comparing offline-to-online sampling ratios of 1:1, 0:1, and 1:2"><img src="./static/images/fig_mixing_ratio.png" alt="Towel folding ablation comparing offline-to-online sampling ratios of 1:1, 0:1, and 1:2" width="2000" height="1734" decoding="async" loading="lazy"></a>
+            <figcaption><b>Offline:online ratio on towel folding.</b> Mixed training outperforms online-only
+              training (0:1); n = 30 with 95% confidence intervals.</figcaption>
+          </figure>
+        </div>
+        <div class="column is-half content">
+          <p>Online corrections concentrate on failure states. Retaining offline demonstrations supplies
+            nominal action supervision beyond those targeted corrections.</p>
+          <p>Online-only training (<b>0:1</b>) performs worse, with observed overfitting, drift, and stuck
+            behavior. <b>1:2</b> is competitive with <b>1:1</b> but converges more slowly and slightly lower.
+            The main experiments use fixed <b>1:1</b> sampling; this single-task ablation does not establish
+            a globally optimal ratio.</p>
+        </div>
+      </div>
+      <div class="content">
+        <p>Separately, <b>LIFT w/ Offline DAgger</b> uses a fixed force-correction buffer and underperforms
+          across all tasks, scoring zero on book insertion despite force supervision. It removes repeated
+          on-policy aggregation, whereas the 0:1 mixture removes offline demonstrations. These comparisons
+          support complementary roles for offline coverage and continuously collected corrections.</p>
+      </div>
+    </article>
+
+    <article class="experiment-question" id="generalization">
+      <h3 class="title is-4">How does LIFT handle tested shifts? <span class="question-number">Q5</span></h3>
+      <div class="content">
+        <p>The final LIFT checkpoint shows no clear degradation under the tested object, tablecloth, and
+          lighting changes. These tests retain <b>10 rollouts per condition</b>. The observation is limited to
+          these shifts and does not establish broad task generalization or statistical equivalence.</p>
+      </div>
+      <figure class="lift-figure performance-curve">
+        <a class="figure-link" href="./static/images/fig_generalization_bars.png" target="_blank" rel="noopener" aria-label="Open full-size figure: LIFT performance under the original task conditions and tested object, tablecloth, and purple-light changes"><img src="./static/images/fig_generalization_bars.png" alt="LIFT performance under the original task conditions and tested object, tablecloth, and purple-light changes" width="2800" height="782" decoding="async" loading="lazy"></a>
+        <figcaption><b>Performance under the tested shifts.</b> Original ten-rollout evaluation, reported
+          separately from the n = 30 learning curves and ablations.</figcaption>
+      </figure>
+      <figure class="lift-figure performance-curve">
+        <a class="figure-link" href="./static/images/fig_gen_settings.png" target="_blank" rel="noopener" aria-label="Open full-size figure: Photographs of the towel folding, book insertion, and Hanoi ring placement generalization setups"><img src="./static/images/fig_gen_settings.png" alt="Photographs of the towel folding, book insertion, and Hanoi ring placement generalization setups" width="2400" height="945" decoding="async" loading="lazy"></a>
+        <figcaption><b>Generalization settings.</b> A blue towel or gray book tests object changes;
+          an alternate tablecloth and purple side light test environmental changes. The robot start pose
+          and target location stay fixed, with only the listed factor changing.</figcaption>
+      </figure>
+    </article>
+  </div>
+</section>
+
+<section id="videos" class="section">
+  <div class="container is-max-desktop">
     <div class="experiment-videos">
-      <h3 class="title is-4">Videos</h3>
+      <h2 class="title is-3">Task videos</h2>
+      <p class="video-instructions">Play a clip to start the matching demonstrations together.</p>
       <div class="task-video-group compact">
-        <h4 class="title is-5">Towel Folding</h4>
+        <h3 class="title is-5">Towel Folding</h3>
         <div class="columns is-centered">
           <div class="column is-6">
             <div class="video-method-group">
@@ -278,7 +400,7 @@
         </div>
       </div>
       <div class="task-video-group compact">
-        <h4 class="title is-5">Book Insertion</h4>
+        <h3 class="title is-5">Book Insertion</h3>
         <div class="columns is-centered">
           <div class="column is-4">
             <div class="video-method-group">
@@ -325,7 +447,7 @@
         </div>
       </div>
       <div class="task-video-group compact">
-        <h4 class="title is-5">Hanoi Ring Placement</h4>
+        <h3 class="title is-5">Hanoi Ring Placement</h3>
         <div class="columns is-centered">
           <div class="column is-4">
             <div class="video-method-group">
@@ -373,57 +495,15 @@
       </div>
     </div>
 
-    <div class="question-summary">
-      <article class="qa-card">
-        <h3 class="title is-5">Q1: Does force accelerate VLA post-training?</h3>
-        <p>
-          This question compares LIFT and LIFT w/o Reactive Force Injection against
-          &pi;<sub>0.5</sub> w/ Online DAgger. The result shows that force-aware post-training learns faster
-          and reaches stronger task performance than vision-only online post-training.
-        </p>
-      </article>
-      <article class="qa-card">
-        <h3 class="title is-5">Q2: Does reactive force injection matter?</h3>
-        <p>
-          This question compares LIFT with LIFT w/o Reactive Force Injection. The result shows that recent
-          force memory and within-chunk reactive updates are important for contact phases that cannot be
-          resolved from a single force frame.
-        </p>
-      </article>
-      <article class="qa-card">
-        <h3 class="title is-5">Q3: Does online data matter for reactive force injection?</h3>
-        <p>
-          This question compares LIFT with LIFT w/o Online DAgger. The result shows that offline force data
-          alone misses many contact states encountered by the learner, while online DAgger collects corrections
-          on the policy's own failure states.
-        </p>
-      </article>
-      <article class="qa-card">
-        <h3 class="title is-5">Q4: Does LIFT preserve generalization?</h3>
-        <p>
-          This question evaluates the final LIFT checkpoint under object, tablecloth, and lighting shifts.
-          The result shows that LIFT keeps the visual generalization inherited from the pretrained VLA while
-          adding force-aware contact adaptation.
-        </p>
-      </article>
-    </div>
 
-    <figure class="lift-figure performance-curve">
-      <img src="./static/images/fig_generalization_bars.png" alt="Generalization performance bars">
-      <figcaption><b>Generalization results.</b> Performance under shifted task conditions.</figcaption>
-    </figure>
-    <figure class="lift-figure">
-      <img src="./static/images/fig_gen_settings.png" alt="Generalization task settings">
-      <figcaption><b>Generalization settings.</b> Task setups used for shifted-condition evaluation.</figcaption>
-    </figure>
   </div>
 </section>
 
 <section id="bibtex" class="section">
   <div class="container is-max-desktop">
     <h2 class="title is-3">BibTeX</h2>
-    <pre class="bibtex-block"><code>@article{wang2026lift,
-  title   = {LIFT: Never Too Late for Force -- Accelerating VLA Post-Training with Reactive Force Injection},
+    <pre class="bibtex-block"><code>@inproceedings{wang2026lift,
+  title   = {Never Too Late for Force: Accelerating VLA Post-Training with Reactive Force Injection},
   author  = {Wang, Yi and Chen, Wendi and Wen, Zimo and Xue, Han and Li, Xueqi and Yu, Wenye and Chen, Zhijie and Yang, Hao and Lv, Jun and Wen, Chuan and Lu, Cewu},
   booktitle = {Conference on Robot Learning (CoRL)},
   year    = {2026}
