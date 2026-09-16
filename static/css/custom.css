@@ -16,6 +16,15 @@
     padding-bottom: 1.75rem;
 }
 
+.lift-intro-video {
+    background: #ffffff;
+    border-radius: 8px;
+    display: block;
+    height: auto;
+    margin: 0 auto 2rem;
+    width: 96%;
+}
+
 .publication-title {
     line-height: 1.08;
 }
@@ -280,7 +289,8 @@
         font-size: 2rem !important;
     }
 
-    .lift-main-figure {
+    .lift-main-figure,
+    .lift-intro-video {
         width: 100%;
     }
 
