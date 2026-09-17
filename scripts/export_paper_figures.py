@@ -51,6 +51,12 @@ FIGURES = (
         0,
     ),
     ("figs/gen_settings/gen_settings.pdf", "fig_gen_settings.png", 2400, 0),
+    (
+        "figs/task_protocol_failure_analysis/task_protocol_failure_analysis.pdf",
+        "fig_task_protocol.png",
+        2800,
+        0,
+    ),
 )
 
 
