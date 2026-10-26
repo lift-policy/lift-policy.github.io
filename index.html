@@ -14,7 +14,7 @@
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css?v=de214a17b6c7">
-  <link rel="stylesheet" href="./static/css/custom.css?v=20261026">
+  <link rel="stylesheet" href="./static/css/custom.css?v=20261026-2">
   <link rel="icon" href="./static/images/favicon.svg">
 
   <script defer src="./static/js/fontawesome.all.min.js"></script>
@@ -23,47 +23,15 @@
 </head>
 <body>
 
-<nav class="related-research-bar" aria-label="Related research">
-  <div class="navbar-item has-dropdown is-hoverable related-research-menu">
-    <button type="button"
-            class="navbar-link related-research-toggle"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-controls="related-research-dropdown">
-      Related Research
-    </button>
-    <div class="navbar-dropdown related-research-dropdown" id="related-research-dropdown" role="menu">
-      <a class="navbar-item" href="https://reactive-diffusion-policy.github.io/" target="_blank" rel="noopener noreferrer" role="menuitem">
-        Reactive Diffusion Policy
-      </a>
-      <a class="navbar-item" href="https://implicit-rdp.github.io/" target="_blank" rel="noopener noreferrer" role="menuitem">
-        ImplicitRDP
-      </a>
-      <a class="navbar-item" href="https://fa-rdp.github.io/" target="_blank" rel="noopener noreferrer" role="menuitem">
-        FA-RDP
-      </a>
-    </div>
-  </div>
-</nav>
-
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <button type="button" class="navbar-burger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-menu">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </button>
-  </div>
-  <div class="navbar-menu" id="main-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="#abstract">Abstract</a>
-      <a class="navbar-item" href="#method">Method</a>
-      <a class="navbar-item" href="#experiments">Results</a>
-      <a class="navbar-item" href="#tasks">Tasks</a>
-      <a class="navbar-item" href="#videos">Videos</a>
-      <a class="navbar-item" href="#bibtex">BibTeX</a>
-    </div>
-  </div>
+<nav class="research-nav" aria-label="Related research">
+  <details class="research-dropdown">
+    <summary>Related Research</summary>
+    <ul class="research-links">
+      <li><a href="https://reactive-diffusion-policy.github.io/" target="_blank" rel="noopener noreferrer">Reactive Diffusion Policy</a></li>
+      <li><a href="https://implicit-rdp.github.io/" target="_blank" rel="noopener noreferrer">ImplicitRDP</a></li>
+      <li><a href="https://fa-rdp.github.io/" target="_blank" rel="noopener noreferrer">FA-RDP</a></li>
+    </ul>
+  </details>
 </nav>
 
 <section class="hero lift-hero">
