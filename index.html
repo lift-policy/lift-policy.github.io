@@ -14,7 +14,7 @@
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css?v=de214a17b6c7">
-  <link rel="stylesheet" href="./static/css/custom.css?v=20260917">
+  <link rel="stylesheet" href="./static/css/custom.css?v=20261026">
   <link rel="icon" href="./static/images/favicon.svg">
 
   <script defer src="./static/js/fontawesome.all.min.js"></script>
@@ -33,6 +33,26 @@
   </div>
   <div class="navbar-menu" id="main-menu">
     <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <div class="navbar-item has-dropdown is-hoverable related-research-menu">
+        <button type="button"
+                class="navbar-link related-research-toggle"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="related-research-dropdown">
+          Related Research
+        </button>
+        <div class="navbar-dropdown related-research-dropdown" id="related-research-dropdown" role="menu">
+          <a class="navbar-item" href="https://reactive-diffusion-policy.github.io/" target="_blank" rel="noopener noreferrer" role="menuitem">
+            Reactive Diffusion Policy
+          </a>
+          <a class="navbar-item" href="https://implicit-rdp.github.io/" target="_blank" rel="noopener noreferrer" role="menuitem">
+            ImplicitRDP
+          </a>
+          <a class="navbar-item" href="https://fa-rdp.github.io/" target="_blank" rel="noopener noreferrer" role="menuitem">
+            FA-RDP
+          </a>
+        </div>
+      </div>
       <a class="navbar-item" href="#abstract">Abstract</a>
       <a class="navbar-item" href="#method">Method</a>
       <a class="navbar-item" href="#experiments">Results</a>

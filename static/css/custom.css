@@ -1,3 +1,41 @@
+/* Related research menu */
+.related-research-menu > .related-research-toggle {
+    background: transparent;
+    border: 0;
+    color: #3273dc;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.related-research-menu > .related-research-toggle:hover,
+.related-research-menu.is-active > .related-research-toggle {
+    color: #3273dc;
+}
+
+.related-research-menu .related-research-dropdown {
+    min-width: 19rem;
+    padding-bottom: 0.55rem;
+    padding-top: 0.55rem;
+}
+
+.related-research-menu .related-research-dropdown .navbar-item {
+    min-height: 3.25rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 1023px) {
+    .related-research-menu .related-research-dropdown {
+        min-width: 0;
+    }
+
+    .related-research-menu .related-research-dropdown .navbar-item {
+        min-height: 2.75rem;
+        padding-left: 2.5rem;
+    }
+}
+
 .lift-hero {
     background: linear-gradient(180deg, #f7fafc 0%, #ffffff 100%);
 }
