@@ -1,21 +1,63 @@
 /* Related research menu */
+.related-research-bar {
+    align-items: center;
+    background: #ffffff;
+    border-bottom: 1px solid #d9d9d9;
+    display: flex;
+    justify-content: center;
+    min-height: 4.25rem;
+    padding: 0.55rem 1rem;
+    position: relative;
+    z-index: 30;
+}
+
+.related-research-bar > .related-research-menu {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
 .related-research-menu > .related-research-toggle {
     background: transparent;
-    border: 0;
+    border: 2px solid #3273dc;
+    border-radius: 4px;
     color: #3273dc;
     cursor: pointer;
     font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 500;
+    min-height: 2.9rem;
+    padding: 0.55rem 2.9rem 0.55rem 1rem;
+}
+
+.related-research-menu > .related-research-toggle::after {
+    border-color: #3273dc;
 }
 
 .related-research-menu > .related-research-toggle:hover,
 .related-research-menu.is-active > .related-research-toggle {
+    background: #f5f8ff;
     color: #3273dc;
 }
 
 .related-research-menu .related-research-dropdown {
+    background: #ffffff;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+    display: none;
+    left: 50%;
     min-width: 19rem;
     padding-bottom: 0.55rem;
     padding-top: 0.55rem;
+    position: absolute;
+    top: 100%;
+    transform: translateX(-50%);
+}
+
+.related-research-menu.is-active .related-research-dropdown,
+.related-research-menu:hover .related-research-dropdown,
+.related-research-menu:focus-within .related-research-dropdown {
+    display: block;
 }
 
 .related-research-menu .related-research-dropdown .navbar-item {
@@ -26,8 +68,13 @@
 }
 
 @media screen and (max-width: 1023px) {
+    .related-research-bar {
+        min-height: 4rem;
+    }
+
     .related-research-menu .related-research-dropdown {
         min-width: 0;
+        width: min(19rem, calc(100vw - 2rem));
     }
 
     .related-research-menu .related-research-dropdown .navbar-item {
